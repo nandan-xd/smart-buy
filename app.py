@@ -14,6 +14,7 @@ DATABASE_PATH = BASE_DIR / "data" / "student_smart_buy.db"
 SAMPLE_PRODUCTS = [
     {
         "name": "HP 15s Ryzen 5 Laptop",
+        "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80",
         "rating": 4.3,
         "prices": [
@@ -32,6 +33,7 @@ SAMPLE_PRODUCTS = [
     },
     {
         "name": "Noise Cancelling Study Headphones",
+        "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
         "rating": 4.1,
         "prices": [
@@ -50,6 +52,7 @@ SAMPLE_PRODUCTS = [
     },
     {
         "name": "Scientific Calculator FX-991ES Plus",
+        "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=900&q=80",
         "rating": 4.8,
         "prices": [
@@ -68,6 +71,7 @@ SAMPLE_PRODUCTS = [
     },
     {
         "name": "Ergonomic Study Chair",
+        "category": "Fashion",
         "image_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
         "rating": 4.0,
         "prices": [
@@ -82,6 +86,44 @@ SAMPLE_PRODUCTS = [
             ("2026-03-18", 7499),
             ("2026-03-23", 7599),
             ("2026-03-30", 7499),
+        ],
+    },
+    {
+        "name": "Minimal Skincare Repair Serum",
+        "category": "Skincare",
+        "image_url": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=900&q=80",
+        "rating": 4.2,
+        "prices": [
+            {"platform": "Amazon", "price": 549, "link": "https://www.amazon.in/dp/B0CEXAMPLE5"},
+            {"platform": "Nykaa", "price": 525, "link": "https://www.nykaa.com/minimal-serum/p/example5"},
+            {"platform": "Flipkart", "price": 579, "link": "https://www.flipkart.com/minimal-serum/p/itmexample5"},
+        ],
+        "history": [
+            ("2026-03-03", 619),
+            ("2026-03-08", 599),
+            ("2026-03-13", 589),
+            ("2026-03-18", 569),
+            ("2026-03-23", 549),
+            ("2026-03-30", 525),
+        ],
+    },
+    {
+        "name": "Campus Everyday Sneakers",
+        "category": "Fashion",
+        "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
+        "rating": 4.1,
+        "prices": [
+            {"platform": "Amazon", "price": 1499, "link": "https://www.amazon.in/dp/B0CEXAMPLE6"},
+            {"platform": "Myntra", "price": 1399, "link": "https://www.myntra.com/shoes/campus/example6"},
+            {"platform": "Flipkart", "price": 1599, "link": "https://www.flipkart.com/campus-sneakers/p/itmexample6"},
+        ],
+        "history": [
+            ("2026-03-03", 1699),
+            ("2026-03-08", 1649),
+            ("2026-03-13", 1599),
+            ("2026-03-18", 1549),
+            ("2026-03-23", 1499),
+            ("2026-03-30", 1399),
         ],
     },
 ]
@@ -121,6 +163,7 @@ def create_app(database_path: str | None = None) -> Flask:
             CREATE TABLE IF NOT EXISTS Products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
+                category TEXT NOT NULL DEFAULT 'Tech',
                 image_url TEXT NOT NULL,
                 rating REAL NOT NULL
             );
@@ -143,6 +186,9 @@ def create_app(database_path: str | None = None) -> Flask:
             );
             """
         )
+        product_columns = [row["name"] for row in db.execute("PRAGMA table_info(Products)").fetchall()]
+        if "category" not in product_columns:
+            db.execute("ALTER TABLE Products ADD COLUMN category TEXT NOT NULL DEFAULT 'Tech'")
         db.commit()
 
     def seed_db() -> None:
@@ -153,8 +199,8 @@ def create_app(database_path: str | None = None) -> Flask:
 
         for product in SAMPLE_PRODUCTS:
             product_id = db.execute(
-                "INSERT INTO Products (name, image_url, rating) VALUES (?, ?, ?)",
-                (product["name"], product["image_url"], product["rating"]),
+                "INSERT INTO Products (name, category, image_url, rating) VALUES (?, ?, ?, ?)",
+                (product["name"], product["category"], product["image_url"], product["rating"]),
             ).lastrowid
             for price in product["prices"]:
                 db.execute(
@@ -208,6 +254,10 @@ def create_app(database_path: str | None = None) -> Flask:
         elif lowest_price > 60000:
             rating -= 0.2
 
+        if "skincare" in normalized_name or "serum" in normalized_name:
+            rating += 0.2
+        if "fashion" in normalized_name or "sneakers" in normalized_name:
+            rating += 0.15
         rating += min(spread_ratio * 3.5, 0.45)
         return round(clamp(rating, 2.8, 4.9), 1)
 
@@ -221,6 +271,7 @@ def create_app(database_path: str | None = None) -> Flask:
             if not isinstance(item, dict):
                 raise ValueError("Each imported product must be a JSON object.")
             name = str(item.get("name", "")).strip()
+            category = str(item.get("category", "Tech")).strip() or "Tech"
             image_url = str(item.get("image_url") or item.get("image") or "").strip()
             prices = item.get("prices", [])
             if not name or not image_url or not prices:
@@ -239,6 +290,7 @@ def create_app(database_path: str | None = None) -> Flask:
             normalized_products.append(
                 {
                     "name": name,
+                    "category": category,
                     "image_url": image_url,
                     "rating": rating,
                     "prices": normalized_prices,
@@ -251,13 +303,13 @@ def create_app(database_path: str | None = None) -> Flask:
         db = get_db()
         if product_id is None:
             product_id = db.execute(
-                "INSERT INTO Products (name, image_url, rating) VALUES (?, ?, ?)",
-                (payload["name"], payload["image_url"], payload["rating"]),
+                "INSERT INTO Products (name, category, image_url, rating) VALUES (?, ?, ?, ?)",
+                (payload["name"], payload["category"], payload["image_url"], payload["rating"]),
             ).lastrowid
         else:
             db.execute(
-                "UPDATE Products SET name = ?, image_url = ?, rating = ? WHERE id = ?",
-                (payload["name"], payload["image_url"], payload["rating"], product_id),
+                "UPDATE Products SET name = ?, category = ?, image_url = ?, rating = ? WHERE id = ?",
+                (payload["name"], payload["category"], payload["image_url"], payload["rating"], product_id),
             )
             db.execute("DELETE FROM Prices WHERE product_id = ?", (product_id,))
             db.execute("DELETE FROM PriceHistory WHERE product_id = ?", (product_id,))
@@ -333,6 +385,8 @@ def create_app(database_path: str | None = None) -> Flask:
             tag = "Overpriced"
         else:
             tag = "Fair Price"
+        decision = "BUY NOW" if score >= 7 else "WAIT"
+        is_best_deal = ((current_highest - current_lowest) / current_highest) >= 0.08 if current_highest else False
 
         insights = []
         insights.append(
@@ -344,11 +398,14 @@ def create_app(database_path: str | None = None) -> Flask:
             insights.append("Price trend is increasing.")
         else:
             insights.append("Price trend is stable.")
+        insights.append("Good time to buy." if score >= 7 else "Monitor the trend before buying.")
 
         return {
             "score": score,
             "label": label,
             "tag": tag,
+            "decision": decision,
+            "is_best_deal": is_best_deal,
             "price_score": round(price_score, 1),
             "trend_score": round(trend_score, 1),
             "discount_score": round(discount_score, 1),
@@ -380,6 +437,7 @@ def create_app(database_path: str | None = None) -> Flask:
             searchable = " ".join(
                 [
                     product["name"],
+                    product["category"],
                     " ".join(price["platform"] for price in product["prices"]),
                     product["analytics"]["cheapest_platform"],
                     product["analytics"]["tag"],
@@ -525,6 +583,7 @@ def create_app(database_path: str | None = None) -> Flask:
     def add_product():
         payload = {
             "name": request.form.get("name", "").strip(),
+            "category": request.form.get("category", "Tech").strip() or "Tech",
             "image_url": request.form.get("image_url", "").strip(),
             "prices": extract_prices_from_form(request.form),
         }
@@ -542,6 +601,7 @@ def create_app(database_path: str | None = None) -> Flask:
     def edit_product(product_id: int):
         payload = {
             "name": request.form.get("name", "").strip(),
+            "category": request.form.get("category", "Tech").strip() or "Tech",
             "image_url": request.form.get("image_url", "").strip(),
             "prices": extract_prices_from_form(request.form),
         }

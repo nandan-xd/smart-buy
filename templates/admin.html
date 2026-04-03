@@ -15,6 +15,15 @@
             <input type="text" class="form-control smart-input" name="name" value="{{ editing_product.name if editing_product else '' }}" required>
           </div>
           <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select smart-input" name="category" required>
+              {% set active_category = editing_product.category if editing_product else 'Tech' %}
+              <option value="Tech" {% if active_category == 'Tech' %}selected{% endif %}>Tech</option>
+              <option value="Skincare" {% if active_category == 'Skincare' %}selected{% endif %}>Skincare</option>
+              <option value="Fashion" {% if active_category == 'Fashion' %}selected{% endif %}>Fashion</option>
+            </select>
+          </div>
+          <div class="mb-3">
             <label class="form-label">Image URL</label>
             <input type="url" class="form-control smart-input" name="image_url" value="{{ editing_product.image_url if editing_product else '' }}" required>
           </div>
@@ -63,6 +72,7 @@
               placeholder='[
   {
     "name": "Samsung S26 Ultra",
+    "category": "Tech",
     "image_url": "https://example.com/phone.jpg",
     "prices": [
       {"platform": "Amazon", "price": 124999, "link": "https://amazon.in/..."},
@@ -91,6 +101,7 @@
             <thead>
               <tr>
                 <th>Product</th>
+                <th>Category</th>
                 <th>Lowest Price</th>
                 <th>Smart Score</th>
                 <th>Rating</th>
@@ -101,6 +112,7 @@
               {% for product in products %}
                 <tr>
                   <td>{{ product.name }}</td>
+                  <td><span class="smart-tag neutral-tag">{{ product.category }}</span></td>
                   <td>{{ product.analytics.current_lowest|currency }}</td>
                   <td><span class="smart-tag tag-{{ product.analytics.label|lower|replace(' ', '-') }}">{{ product.analytics.score }}/10</span></td>
                   <td>{{ product.rating }}</td>

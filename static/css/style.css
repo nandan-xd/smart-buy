@@ -92,6 +92,19 @@ body.theme-body {
   padding-inline: 1rem;
 }
 
+.theme-toggle-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  min-width: 132px;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .hero-wrap {
   padding-top: 1rem;
 }
@@ -160,6 +173,11 @@ body.theme-body {
   min-height: 46px;
 }
 
+.trust-line {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .hero-feature {
   padding: 1rem 1.1rem;
   border-radius: 1.2rem;
@@ -205,6 +223,34 @@ body.theme-body {
   font-size: 2rem;
 }
 
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filter-chip {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-strong) 74%, transparent);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.filter-chip:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.filter-chip.active {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
 .product-card {
   overflow: hidden;
   transition: transform 220ms ease, box-shadow 220ms ease;
@@ -212,7 +258,7 @@ body.theme-body {
 
 .product-card:hover,
 .content-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px) scale(1.01);
   box-shadow: 0 28px 70px rgba(22, 32, 51, 0.16);
 }
 
@@ -231,6 +277,26 @@ body.theme-body {
   font-weight: 700;
 }
 
+.mini-score-wrap {
+  flex-shrink: 0;
+}
+
+.mini-score {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 3px solid transparent;
+  background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
+}
+
+.mini-score span {
+  line-height: 1;
+}
+
 .score-badge {
   padding: 0.45rem 0.7rem;
   min-width: 76px;
@@ -245,7 +311,7 @@ body.theme-body {
 }
 
 .score-good-buy {
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  background: linear-gradient(135deg, #16a34a, #34d399);
 }
 
 .score-average,
@@ -269,6 +335,26 @@ body.theme-body {
 .smart-tag {
   padding: 0.35rem 0.7rem;
   font-size: 0.76rem;
+}
+
+.decision-tag {
+  letter-spacing: 0.02em;
+}
+
+.decision-buy {
+  background: linear-gradient(135deg, #16a34a, #34d399);
+  color: #fff;
+}
+
+.decision-wait {
+  background: linear-gradient(135deg, #dc2626, #fb7185);
+  color: #fff;
+}
+
+.card-insight {
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .score-breakdown {
@@ -341,11 +427,12 @@ body.theme-body {
 
 .score-ring {
   --score-angle: 180deg;
+  --ring-color: var(--accent);
   width: 180px;
   height: 180px;
   margin: 1.5rem auto 0;
   border-radius: 50%;
-  background: conic-gradient(var(--accent) 0 var(--score-angle), rgba(127, 140, 171, 0.16) var(--score-angle) 360deg);
+  background: conic-gradient(var(--ring-color) 0 var(--score-angle), rgba(127, 140, 171, 0.16) var(--score-angle) 360deg);
   display: grid;
   place-items: center;
 }
@@ -388,6 +475,44 @@ body.theme-body {
 .smart-input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 0.2rem rgba(61, 99, 255, 0.16);
+}
+
+.smart-input::placeholder {
+  color: color-mix(in srgb, var(--muted) 85%, transparent);
+}
+
+.product-grid-item.is-hidden {
+  display: none;
+}
+
+.score-band-buy {
+  --ring-color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.32);
+  color: #15803d;
+}
+
+.score-band-average {
+  --ring-color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.32);
+  color: #b45309;
+}
+
+.score-band-wait {
+  --ring-color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.32);
+  color: #b91c1c;
+}
+
+html[data-theme="dark"] .score-band-buy {
+  color: #86efac;
+}
+
+html[data-theme="dark"] .score-band-average {
+  color: #fcd34d;
+}
+
+html[data-theme="dark"] .score-band-wait {
+  color: #fca5a5;
 }
 
 .price-row {

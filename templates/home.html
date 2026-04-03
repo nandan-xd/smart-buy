@@ -8,22 +8,24 @@
     <div class="hero-card">
       <div class="row align-items-center g-4">
         <div class="col-lg-7">
-          <span class="hero-badge">Smarter price decisions</span>
-          <h1 class="hero-title mt-3">Compare prices, score the deal, and buy smarter.</h1>
+          <span class="hero-badge">Smart buying assistant</span>
+          <h1 class="hero-title mt-3">Find the Smartest Deals for Students</h1>
           <p class="hero-copy mt-3">
-            Smart Buy Hub helps you spot the best value quickly with live-style price comparisons,
-            smart scoring, trend visuals, and decision-friendly insights.
+            Compare prices, track trends, and know when to buy.
           </p>
-          <form class="hero-search mt-4" action="{{ url_for('home') }}" method="get">
+          <form class="hero-search mt-4" action="{{ url_for('home') }}" method="get" id="heroSearchForm">
             <input
               type="search"
               name="q"
+              id="productSearch"
               class="form-control smart-input hero-search-input"
-              placeholder="Search products or platforms..."
+              placeholder="Search products instantly..."
               value="{{ search_query|default('', true) }}"
+              autocomplete="off"
             >
             <button type="submit" class="btn btn-primary smart-btn">Search</button>
           </form>
+          <p class="trust-line mt-3 mb-0">Prices updated recently. Based on available market data.</p>
           {% if featured_product %}
             <div class="hero-feature mt-4">
               <span class="smart-tag tag-{{ featured_product.analytics.tag|lower|replace(' ', '-') }}">{{ featured_product.analytics.tag }}</span>
@@ -49,6 +51,13 @@
 </section>
 
 <section class="container mt-4">
+  <div class="filter-bar mb-4">
+    <button class="filter-chip active" data-category="All" type="button">All</button>
+    <button class="filter-chip" data-category="Skincare" type="button">Skincare</button>
+    <button class="filter-chip" data-category="Fashion" type="button">Fashion</button>
+    <button class="filter-chip" data-category="Tech" type="button">Tech</button>
+  </div>
+
   <div class="row g-4 mb-4">
     <div class="col-sm-6 col-xl-3">
       <div class="dashboard-stat">
@@ -96,22 +105,33 @@
   </div>
 
   {% if products %}
-    <div class="row g-4">
+    <div class="row g-4" id="productGrid">
       {% for product in products %}
-        <div class="col-sm-6 col-lg-4 col-xl-3">
+        <div class="col-sm-6 col-lg-4 col-xl-3 product-grid-item" data-name="{{ product.name|lower }}" data-category="{{ product.category|lower }}" data-platforms="{% for price in product.prices %}{{ price.platform|lower }} {% endfor %}">
           <div class="card product-card h-100 border-0">
             <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
             <div class="card-body d-flex flex-column">
               <div class="d-flex justify-content-between align-items-start gap-2">
                 <h3 class="card-title product-name">{{ product.name }}</h3>
-                <span class="score-badge score-{{ product.analytics.label|lower|replace(' ', '-') }}">{{ product.analytics.score }}/10</span>
+                <div class="mini-score-wrap">
+                  <div class="mini-score score-band-{% if product.analytics.score >= 7 %}buy{% elif product.analytics.score >= 5 %}average{% else %}wait{% endif %}">
+                    <span>{{ product.analytics.score }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap mt-2">
+                <span class="smart-tag neutral-tag">{{ product.category }}</span>
+                {% if product.analytics.is_best_deal %}
+                  <span class="smart-tag tag-best-deal">🔥 Best Deal</span>
+                {% endif %}
               </div>
               <p class="small text-body-secondary mt-2">Lowest price right now</p>
               <div class="price-line">{{ product.analytics.current_lowest|currency }}</div>
               <div class="mt-3 d-flex gap-2 flex-wrap">
-                <span class="smart-tag tag-{{ product.analytics.tag|lower|replace(' ', '-') }}">{{ product.analytics.tag }}</span>
+                <span class="smart-tag decision-tag {% if product.analytics.decision == 'BUY NOW' %}decision-buy{% else %}decision-wait{% endif %}">{{ product.analytics.decision }}</span>
                 <span class="smart-tag neutral-tag">{{ product.analytics.cheapest_platform }}</span>
               </div>
+              <p class="card-insight mt-3 mb-0">{{ product.analytics.insights[0] }}</p>
               <div class="score-breakdown mt-3">
                 <span>Price {{ product.analytics.price_score }}</span>
                 <span>Trend {{ product.analytics.trend_score }}</span>
@@ -126,10 +146,14 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="content-card text-center">
+    <div class="content-card text-center" id="emptyState">
       <h3 class="mb-2">No products found</h3>
       <p class="section-copy mb-0">Try searching for a different product name or platform.</p>
     </div>
   {% endif %}
+  <div class="content-card text-center d-none" id="filteredEmptyState">
+    <h3 class="mb-2">No products found</h3>
+    <p class="section-copy mb-0">Try another search or category filter.</p>
+  </div>
 </section>
 {% endblock %}

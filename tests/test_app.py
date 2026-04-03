@@ -18,8 +18,10 @@ class StudentSmartBuyTests(unittest.TestCase):
     def test_home_page_loads(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Smart Buy Hub", response.data)
+        self.assertIn(b"Find the Smartest Deals for Students", response.data)
         self.assertIn(b"Products tracked", response.data)
+        self.assertIn(b"Skincare", response.data)
+        self.assertIn(b"Fashion", response.data)
 
     def test_home_search_filters_products(self):
         response = self.client.get("/?q=calculator")
@@ -38,6 +40,7 @@ class StudentSmartBuyTests(unittest.TestCase):
             "/admin/add",
             data={
                 "name": "Budget Backpack",
+                "category": "Tech",
                 "image_url": "https://example.com/bag.jpg",
                 "platform[]": ["Amazon", "Flipkart"],
                 "price[]": ["1499", "1399"],
@@ -62,6 +65,7 @@ class StudentSmartBuyTests(unittest.TestCase):
                 [
                   {
                     "name": "Samsung S26 Ultra",
+                    "category": "Tech",
                     "image_url": "https://example.com/s26.jpg",
                     "prices": [
                       {"platform": "Amazon", "price": 124999, "link": "https://amazon.in/s26"},
@@ -70,6 +74,7 @@ class StudentSmartBuyTests(unittest.TestCase):
                   },
                   {
                     "name": "Study Lamp Pro",
+                    "category": "Tech",
                     "image_url": "https://example.com/lamp.jpg",
                     "prices": [
                       {"platform": "Amazon", "price": 2199, "link": "https://amazon.in/lamp"},

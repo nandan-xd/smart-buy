@@ -17,6 +17,7 @@
         <div class="d-flex flex-wrap gap-2 mb-3">
           <span class="smart-tag tag-{{ product.analytics.tag|lower|replace(' ', '-') }}">{{ product.analytics.tag }}</span>
           <span class="smart-tag neutral-tag">{{ product.analytics.label }}</span>
+          <span class="smart-tag neutral-tag">{{ product.category }}</span>
         </div>
         <h1 class="detail-title">{{ product.name }}</h1>
         <p class="detail-copy mt-3">Compare prices across platforms, check the latest trend, and decide whether it is worth buying now.</p>
@@ -30,12 +31,20 @@
           </div>
           <div class="col-sm-6">
             <div class="mini-stat">
+              <span>Decision</span>
+              <strong>{{ product.analytics.decision }}</strong>
+              <small>{{ product.analytics.insights[2] }}</small>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="mini-stat">
               <span>30-Day Average</span>
               <strong>{{ product.analytics.average_price|currency }}</strong>
-              <small>Based on manual history</small>
+              <small>Based on available market data</small>
             </div>
           </div>
         </div>
+        <p class="trust-line mt-3 mb-0">Prices updated recently. Based on available market data.</p>
       </div>
     </div>
   </div>
@@ -68,7 +77,7 @@
                       <span class="smart-tag neutral-tag">Tracked</span>
                     {% endif %}
                   </td>
-                  <td><a class="btn btn-sm btn-outline-primary" href="{{ item.link }}" target="_blank">Buy Now</a></td>
+                  <td><a class="btn btn-sm btn-outline-primary buy-link-btn" href="{{ item.link }}" target="_blank">Buy Now</a></td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -95,7 +104,7 @@
     <div class="col-lg-4">
       <div class="content-card">
         <h2 class="section-title">Smart Score</h2>
-        <div class="score-ring" style="--score-angle: {{ product.analytics.score * 36 }}deg;">
+        <div class="score-ring score-band-{% if product.analytics.score >= 7 %}buy{% elif product.analytics.score >= 5 %}average{% else %}wait{% endif %}" style="--score-angle: {{ product.analytics.score * 36 }}deg;">
           <div class="score-ring-inner">
             <strong>{{ product.analytics.score }}</strong>
             <span>/ 10</span>
@@ -103,6 +112,7 @@
         </div>
         <div class="text-center mt-3">
           <span class="smart-tag tag-{{ product.analytics.label|lower|replace(' ', '-') }}">{{ product.analytics.label }}</span>
+          <span class="smart-tag decision-tag {% if product.analytics.decision == 'BUY NOW' %}decision-buy{% else %}decision-wait{% endif %}">{{ product.analytics.decision }}</span>
         </div>
         <ul class="list-unstyled insight-list mt-4">
           <li>Price score: <strong>{{ product.analytics.price_score }}</strong></li>
@@ -113,7 +123,7 @@
       </div>
 
       <div class="content-card mt-4">
-        <h2 class="section-title">Smart Insight</h2>
+        <h2 class="section-title">Smart Insights</h2>
         <div class="insight-box mt-3">
           {% for insight in product.analytics.insights %}
             <p class="mb-2">{{ insight }}</p>
