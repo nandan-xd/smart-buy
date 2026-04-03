@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PricePulse India</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="grain"></div>
+
+    <header class="hero shell">
+      <nav class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">PP</div>
+          <div>
+            <p class="eyebrow">India retail intelligence</p>
+            <h1>PricePulse</h1>
+          </div>
+        </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span class="toggle-label">Dark mode</span>
+        </button>
+        <a class="action-link nav-link" href="/admin">Admin</a>
+      </nav>
+
+      <section class="hero-grid">
+        <div class="hero-copy glass-card reveal">
+          <p class="caps">Track smarter</p>
+          <h2>Compare any product across Indian shopping sites in one search.</h2>
+          <p class="hero-text">
+            Search electronics, books, groceries, skincare, shoes, and more. Compare direct product offers,
+            inspect trend lines like a stock chart, and see where the best live deal is right now.
+          </p>
+          <form id="searchForm" class="search-form">
+            <input id="searchInput" name="q" type="text" placeholder="Search shoes, books, coffee, skincare, phones..." autocomplete="off" />
+            <button type="submit">Scan prices</button>
+          </form>
+          <div id="quickPicks" class="quick-picks"></div>
+        </div>
+
+        <div class="hero-panel glass-card reveal delay-1">
+          <p class="caps">What you’ll see</p>
+          <div class="feature-stack">
+            <article>
+              <h3>Cheapest platform</h3>
+              <p>Instant winner card with savings against the next best retailer.</p>
+            </article>
+            <article>
+              <h3>Market-style chart</h3>
+              <p>Animated line and area charts reveal short-term pricing momentum.</p>
+            </article>
+            <article>
+              <h3>Outlined price pie</h3>
+              <p>Clean donut comparison with strong retailer colors for quick visual scanning.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main class="shell">
+      <section id="emptyState" class="empty-state glass-card reveal delay-2">
+        <p class="caps">Start with a product</p>
+        <h2>Your comparison dashboard will appear here.</h2>
+        <p>Try “iPhone 15”, “Nike shoes”, “Nescafe coffee”, or “The Alchemist”.</p>
+      </section>
+
+      <section id="dashboard" class="dashboard hidden">
+        <div class="summary-grid">
+          <article class="summary-card glass-card reveal" id="winnerCard"></article>
+          <article class="summary-card glass-card reveal delay-1" id="priceStats"></article>
+          <article class="summary-card glass-card reveal delay-2" id="productSpotlight"></article>
+        </div>
+
+        <div class="analytics-grid">
+          <section class="glass-card chart-panel reveal">
+            <div class="panel-header">
+              <div>
+                <p class="caps">Trendline</p>
+                <h3>Price action</h3>
+              </div>
+              <p id="lastUpdated" class="meta-pill"></p>
+            </div>
+            <div id="lineChart" class="chart-surface"></div>
+          </section>
+
+          <section class="glass-card chart-panel reveal delay-1">
+            <div class="panel-header">
+              <div>
+                <p class="caps">Distribution</p>
+                <h3>Retailer price map</h3>
+              </div>
+            </div>
+            <div id="donutChart" class="donut-layout"></div>
+          </section>
+        </div>
+
+        <section class="glass-card offers-panel reveal delay-2">
+          <div class="panel-header">
+            <div>
+              <p class="caps">Retailers</p>
+              <h3>Current offers</h3>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>Price</th>
+                  <th>Seller</th>
+                  <th>Stock</th>
+                  <th>Spark</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody id="offersBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+  </html>

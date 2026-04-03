@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Buy Hub{% endblock %}
+
+{% block content %}
+<section class="hero-wrap">
+  <div class="container">
+    <div class="hero-card">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="hero-badge">Smarter price decisions</span>
+          <h1 class="hero-title mt-3">Compare prices, score the deal, and buy smarter.</h1>
+          <p class="hero-copy mt-3">
+            Smart Buy Hub helps you spot the best value quickly with live-style price comparisons,
+            smart scoring, trend visuals, and decision-friendly insights.
+          </p>
+          <form class="hero-search mt-4" action="{{ url_for('home') }}" method="get">
+            <input
+              type="search"
+              name="q"
+              class="form-control smart-input hero-search-input"
+              placeholder="Search products or platforms..."
+              value="{{ search_query|default('', true) }}"
+            >
+            <button type="submit" class="btn btn-primary smart-btn">Search</button>
+          </form>
+          {% if featured_product %}
+            <div class="hero-feature mt-4">
+              <span class="smart-tag tag-{{ featured_product.analytics.tag|lower|replace(' ', '-') }}">{{ featured_product.analytics.tag }}</span>
+              <div class="mt-3">
+                <p class="small text-body-secondary mb-1">Featured smartest pick</p>
+                <h3 class="featured-name">{{ featured_product.name }}</h3>
+                <p class="section-copy mb-0">Lowest live price: {{ featured_product.analytics.current_lowest|currency }} on {{ featured_product.analytics.cheapest_platform }}.</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-lg-5">
+          <div class="hero-panel">
+            <div class="metric-pill">Best Deal detection</div>
+            <div class="metric-pill">Price history charts</div>
+            <div class="metric-pill">Admin-managed catalog</div>
+            <div class="metric-pill">Cheapest platform highlight</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container mt-4">
+  <div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="dashboard-stat">
+        <span>Products tracked</span>
+        <strong>{{ dashboard_metrics.total_products }}</strong>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="dashboard-stat">
+        <span>Average smart score</span>
+        <strong>{{ dashboard_metrics.average_score }}/10</strong>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="dashboard-stat">
+        <span>Best deals live</span>
+        <strong>{{ dashboard_metrics.best_deals }}</strong>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="dashboard-stat">
+        <span>Platforms tracked</span>
+        <strong>{{ dashboard_metrics.platforms_tracked }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="section-title">{% if search_query %}Search Results{% else %}Dashboard Picks{% endif %}</h2>
+      <p class="section-copy mb-0">
+        {% if search_query %}
+          Showing results for “{{ search_query }}”.
+        {% else %}
+          Browse the current smart-buy picks and open any product for a full smart-buy analysis.
+        {% endif %}
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <span class="smart-tag neutral-tag">Scores update automatically from price inputs</span>
+      {% if search_query %}
+        <a href="{{ url_for('home') }}" class="btn btn-outline-secondary btn-sm">Clear Search</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if products %}
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+          <div class="card product-card h-100 border-0">
+            <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h3 class="card-title product-name">{{ product.name }}</h3>
+                <span class="score-badge score-{{ product.analytics.label|lower|replace(' ', '-') }}">{{ product.analytics.score }}/10</span>
+              </div>
+              <p class="small text-body-secondary mt-2">Lowest price right now</p>
+              <div class="price-line">{{ product.analytics.current_lowest|currency }}</div>
+              <div class="mt-3 d-flex gap-2 flex-wrap">
+                <span class="smart-tag tag-{{ product.analytics.tag|lower|replace(' ', '-') }}">{{ product.analytics.tag }}</span>
+                <span class="smart-tag neutral-tag">{{ product.analytics.cheapest_platform }}</span>
+              </div>
+              <div class="score-breakdown mt-3">
+                <span>Price {{ product.analytics.price_score }}</span>
+                <span>Trend {{ product.analytics.trend_score }}</span>
+                <span>Value {{ product.analytics.value_score }}</span>
+              </div>
+              <div class="mt-auto pt-4">
+                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary smart-btn w-100">View Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="content-card text-center">
+      <h3 class="mb-2">No products found</h3>
+      <p class="section-copy mb-0">Try searching for a different product name or platform.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

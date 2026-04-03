@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | Smart Buy Hub{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="container">
+  <div class="detail-shell">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-5">
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="detail-image">
+      </div>
+      <div class="col-lg-7">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="smart-tag tag-{{ product.analytics.tag|lower|replace(' ', '-') }}">{{ product.analytics.tag }}</span>
+          <span class="smart-tag neutral-tag">{{ product.analytics.label }}</span>
+        </div>
+        <h1 class="detail-title">{{ product.name }}</h1>
+        <p class="detail-copy mt-3">Compare prices across platforms, check the latest trend, and decide whether it is worth buying now.</p>
+        <div class="row g-3 mt-2">
+          <div class="col-sm-6">
+            <div class="mini-stat">
+              <span>Cheapest Now</span>
+              <strong>{{ product.analytics.current_lowest|currency }}</strong>
+              <small>{{ product.analytics.cheapest_platform }}</small>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="mini-stat">
+              <span>30-Day Average</span>
+              <strong>{{ product.analytics.average_price|currency }}</strong>
+              <small>Based on manual history</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container mt-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="content-card">
+        <h2 class="section-title mb-3">Price comparison</h2>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in product.prices %}
+                <tr class="{% if loop.first %}cheapest-row{% endif %}">
+                  <td>{{ item.platform }}</td>
+                  <td>{{ item.price|currency }}</td>
+                  <td>
+                    {% if loop.first %}
+                      <span class="smart-tag tag-best-deal">Cheapest</span>
+                    {% else %}
+                      <span class="smart-tag neutral-tag">Tracked</span>
+                    {% endif %}
+                  </td>
+                  <td><a class="btn btn-sm btn-outline-primary" href="{{ item.link }}" target="_blank">Buy Now</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+          <div class="content-card h-100">
+            <h2 class="section-title mb-3">Price History</h2>
+            <canvas id="historyChart" height="220"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="content-card h-100">
+            <h2 class="section-title mb-3">Price Distribution</h2>
+            <canvas id="distributionChart" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="content-card">
+        <h2 class="section-title">Smart Score</h2>
+        <div class="score-ring" style="--score-angle: {{ product.analytics.score * 36 }}deg;">
+          <div class="score-ring-inner">
+            <strong>{{ product.analytics.score }}</strong>
+            <span>/ 10</span>
+          </div>
+        </div>
+        <div class="text-center mt-3">
+          <span class="smart-tag tag-{{ product.analytics.label|lower|replace(' ', '-') }}">{{ product.analytics.label }}</span>
+        </div>
+        <ul class="list-unstyled insight-list mt-4">
+          <li>Price score: <strong>{{ product.analytics.price_score }}</strong></li>
+          <li>Trend score: <strong>{{ product.analytics.trend_score }}</strong></li>
+          <li>Discount score: <strong>{{ product.analytics.discount_score }}</strong></li>
+          <li>Value score: <strong>{{ product.analytics.value_score }}</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-card mt-4">
+        <h2 class="section-title">Smart Insight</h2>
+        <div class="insight-box mt-3">
+          {% for insight in product.analytics.insights %}
+            <p class="mb-2">{{ insight }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const historyCtx = document.getElementById("historyChart");
+  const distributionCtx = document.getElementById("distributionChart");
+
+  new Chart(historyCtx, {
+    type: "line",
+    data: {
+      labels: {{ chart_dates|tojson }},
+      datasets: [{
+        label: "Tracked Price",
+        data: {{ chart_prices|tojson }},
+        borderColor: "#43a047",
+        backgroundColor: "rgba(67, 160, 71, 0.15)",
+        fill: true,
+        tension: 0.35,
+        borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  new Chart(distributionCtx, {
+    type: "pie",
+    data: {
+      labels: {{ pie_labels|tojson }},
+      datasets: [{
+        data: {{ pie_values|tojson }},
+        backgroundColor: ["#43a047", "#ffb300", "#ef5350", "#42a5f5", "#ab47bc"]
+      }]
+    },
+    options: { responsive: true }
+  });
+</script>
+{% endblock %}
