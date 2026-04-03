@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 from functools import wraps
 from pathlib import Path
@@ -9,7 +10,7 @@ from flask import Flask, flash, g, redirect, render_template, request, session, 
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DATABASE_PATH = BASE_DIR / "data" / "student_smart_buy.db"
+DATABASE_PATH = Path(os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "student_smart_buy.db")))
 
 SAMPLE_PRODUCTS = [
     {
