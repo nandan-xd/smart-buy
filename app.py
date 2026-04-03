@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-import os
-import sqlite3
+import copy
+import json
 from functools import wraps
 from pathlib import Path
-import json
 
-from flask import Flask, flash, g, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DATABASE_PATH = Path(os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "student_smart_buy.db")))
+DATA_PATH = BASE_DIR / "data" / "products.json"
 
 SAMPLE_PRODUCTS = [
     {
+        "id": 1,
         "name": "HP 15s Ryzen 5 Laptop",
         "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80",
@@ -24,15 +24,16 @@ SAMPLE_PRODUCTS = [
             {"platform": "Reliance Digital", "price": 53990, "link": "https://www.reliancedigital.in/hp-15s-ryzen-5/p/491902001"},
         ],
         "history": [
-            ("2026-03-03", 55990),
-            ("2026-03-08", 54990),
-            ("2026-03-13", 54490),
-            ("2026-03-18", 53990),
-            ("2026-03-23", 52990),
-            ("2026-03-30", 51990),
+            {"date": "2026-03-03", "price": 55990},
+            {"date": "2026-03-08", "price": 54990},
+            {"date": "2026-03-13", "price": 54490},
+            {"date": "2026-03-18", "price": 53990},
+            {"date": "2026-03-23", "price": 52990},
+            {"date": "2026-03-30", "price": 51990},
         ],
     },
     {
+        "id": 2,
         "name": "Noise Cancelling Study Headphones",
         "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
@@ -43,15 +44,16 @@ SAMPLE_PRODUCTS = [
             {"platform": "Croma", "price": 6249, "link": "https://www.croma.com/noise-cancelling-study-headphones/p/270451"},
         ],
         "history": [
-            ("2026-03-03", 6799),
-            ("2026-03-08", 6599),
-            ("2026-03-13", 6399),
-            ("2026-03-18", 6199),
-            ("2026-03-23", 5999),
-            ("2026-03-30", 5799),
+            {"date": "2026-03-03", "price": 6799},
+            {"date": "2026-03-08", "price": 6599},
+            {"date": "2026-03-13", "price": 6399},
+            {"date": "2026-03-18", "price": 6199},
+            {"date": "2026-03-23", "price": 5999},
+            {"date": "2026-03-30", "price": 5799},
         ],
     },
     {
+        "id": 3,
         "name": "Scientific Calculator FX-991ES Plus",
         "category": "Tech",
         "image_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=900&q=80",
@@ -62,15 +64,16 @@ SAMPLE_PRODUCTS = [
             {"platform": "Moglix", "price": 1235, "link": "https://www.moglix.com/casio-fx-991es-plus/mp/msnexample3"},
         ],
         "history": [
-            ("2026-03-03", 1299),
-            ("2026-03-08", 1279),
-            ("2026-03-13", 1249),
-            ("2026-03-18", 1219),
-            ("2026-03-23", 1189),
-            ("2026-03-30", 1149),
+            {"date": "2026-03-03", "price": 1299},
+            {"date": "2026-03-08", "price": 1279},
+            {"date": "2026-03-13", "price": 1249},
+            {"date": "2026-03-18", "price": 1219},
+            {"date": "2026-03-23", "price": 1189},
+            {"date": "2026-03-30", "price": 1149},
         ],
     },
     {
+        "id": 4,
         "name": "Ergonomic Study Chair",
         "category": "Fashion",
         "image_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
@@ -81,15 +84,16 @@ SAMPLE_PRODUCTS = [
             {"platform": "Pepperfry", "price": 7899, "link": "https://www.pepperfry.com/ergonomic-study-chair-1893201.html"},
         ],
         "history": [
-            ("2026-03-03", 7099),
-            ("2026-03-08", 7249),
-            ("2026-03-13", 7399),
-            ("2026-03-18", 7499),
-            ("2026-03-23", 7599),
-            ("2026-03-30", 7499),
+            {"date": "2026-03-03", "price": 7099},
+            {"date": "2026-03-08", "price": 7249},
+            {"date": "2026-03-13", "price": 7399},
+            {"date": "2026-03-18", "price": 7499},
+            {"date": "2026-03-23", "price": 7599},
+            {"date": "2026-03-30", "price": 7499},
         ],
     },
     {
+        "id": 5,
         "name": "Minimal Skincare Repair Serum",
         "category": "Skincare",
         "image_url": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=900&q=80",
@@ -100,15 +104,16 @@ SAMPLE_PRODUCTS = [
             {"platform": "Flipkart", "price": 579, "link": "https://www.flipkart.com/minimal-serum/p/itmexample5"},
         ],
         "history": [
-            ("2026-03-03", 619),
-            ("2026-03-08", 599),
-            ("2026-03-13", 589),
-            ("2026-03-18", 569),
-            ("2026-03-23", 549),
-            ("2026-03-30", 525),
+            {"date": "2026-03-03", "price": 619},
+            {"date": "2026-03-08", "price": 599},
+            {"date": "2026-03-13", "price": 589},
+            {"date": "2026-03-18", "price": 569},
+            {"date": "2026-03-23", "price": 549},
+            {"date": "2026-03-30", "price": 525},
         ],
     },
     {
+        "id": 6,
         "name": "Campus Everyday Sneakers",
         "category": "Fashion",
         "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
@@ -119,12 +124,12 @@ SAMPLE_PRODUCTS = [
             {"platform": "Flipkart", "price": 1599, "link": "https://www.flipkart.com/campus-sneakers/p/itmexample6"},
         ],
         "history": [
-            ("2026-03-03", 1699),
-            ("2026-03-08", 1649),
-            ("2026-03-13", 1599),
-            ("2026-03-18", 1549),
-            ("2026-03-23", 1499),
-            ("2026-03-30", 1399),
+            {"date": "2026-03-03", "price": 1699},
+            {"date": "2026-03-08", "price": 1649},
+            {"date": "2026-03-13", "price": 1599},
+            {"date": "2026-03-18", "price": 1549},
+            {"date": "2026-03-23", "price": 1499},
+            {"date": "2026-03-30", "price": 1399},
         ],
     },
 ]
@@ -136,84 +141,87 @@ def clamp(value: float, minimum: float = 0, maximum: float = 10) -> float:
 
 def create_app(database_path: str | None = None) -> Flask:
     app = Flask(__name__)
+    storage_path = database_path or str(DATA_PATH)
+    use_memory_store = str(storage_path).startswith("file:")
     app.config.update(
         SECRET_KEY="student-smart-buy-secret",
         ADMIN_USERNAME="admin",
         ADMIN_PASSWORD="smartbuy123",
-        DATABASE=database_path or str(DATABASE_PATH),
+        DATABASE=storage_path,
+        USE_MEMORY_STORE=use_memory_store,
     )
+    app.extensions["catalog_data"] = []
 
-    def get_db() -> sqlite3.Connection:
-        if "db" not in g:
-            db_path = Path(app.config["DATABASE"])
-            if not str(app.config["DATABASE"]).startswith("file:"):
-                db_path.parent.mkdir(parents=True, exist_ok=True)
-            g.db = sqlite3.connect(app.config["DATABASE"], uri=str(app.config["DATABASE"]).startswith("file:"))
-            g.db.row_factory = sqlite3.Row
-        return g.db
+    def default_products() -> list[dict]:
+        return copy.deepcopy(SAMPLE_PRODUCTS)
 
-    def close_db(_: object = None) -> None:
-        db = g.pop("db", None)
-        if db is not None:
-            db.close()
+    def normalize_product(product: dict, product_id: int | None = None) -> dict:
+        normalized = {
+            "id": int(product_id if product_id is not None else product.get("id", 0) or 0),
+            "name": str(product.get("name", "")).strip(),
+            "category": str(product.get("category", "Tech")).strip() or "Tech",
+            "image_url": str(product.get("image_url", "")).strip(),
+            "rating": round(float(product.get("rating", 0)), 1),
+            "prices": [],
+            "history": [],
+        }
 
-    def init_db() -> None:
-        db = get_db()
-        db.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS Products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                category TEXT NOT NULL DEFAULT 'Tech',
-                image_url TEXT NOT NULL,
-                rating REAL NOT NULL
-            );
+        for price in product.get("prices", []):
+            platform = str(price.get("platform", "")).strip()
+            if not platform:
+                continue
+            normalized["prices"].append(
+                {
+                    "platform": platform,
+                    "price": float(price.get("price", 0)),
+                    "link": str(price.get("link", "#")).strip() or "#",
+                }
+            )
 
-            CREATE TABLE IF NOT EXISTS Prices (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER NOT NULL,
-                platform TEXT NOT NULL,
-                price REAL NOT NULL,
-                link TEXT NOT NULL,
-                FOREIGN KEY(product_id) REFERENCES Products(id) ON DELETE CASCADE
-            );
+        for entry in product.get("history", []):
+            if isinstance(entry, dict):
+                date_text = str(entry.get("date", "")).strip()
+                price_value = float(entry.get("price", 0))
+            else:
+                date_text = str(entry[0]).strip()
+                price_value = float(entry[1])
+            if date_text:
+                normalized["history"].append({"date": date_text, "price": price_value})
 
-            CREATE TABLE IF NOT EXISTS PriceHistory (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER NOT NULL,
-                date TEXT NOT NULL,
-                price REAL NOT NULL,
-                FOREIGN KEY(product_id) REFERENCES Products(id) ON DELETE CASCADE
-            );
-            """
-        )
-        product_columns = [row["name"] for row in db.execute("PRAGMA table_info(Products)").fetchall()]
-        if "category" not in product_columns:
-            db.execute("ALTER TABLE Products ADD COLUMN category TEXT NOT NULL DEFAULT 'Tech'")
-        db.commit()
+        normalized["prices"].sort(key=lambda item: item["price"])
+        normalized["history"].sort(key=lambda item: item["date"])
+        return normalized
 
-    def seed_db() -> None:
-        db = get_db()
-        existing = db.execute("SELECT COUNT(*) AS count FROM Products").fetchone()["count"]
-        if existing:
+    def write_catalog(products: list[dict]) -> None:
+        normalized = [normalize_product(product, product.get("id")) for product in products]
+        if app.config["USE_MEMORY_STORE"]:
+            app.extensions["catalog_data"] = copy.deepcopy(normalized)
             return
 
-        for product in SAMPLE_PRODUCTS:
-            product_id = db.execute(
-                "INSERT INTO Products (name, category, image_url, rating) VALUES (?, ?, ?, ?)",
-                (product["name"], product["category"], product["image_url"], product["rating"]),
-            ).lastrowid
-            for price in product["prices"]:
-                db.execute(
-                    "INSERT INTO Prices (product_id, platform, price, link) VALUES (?, ?, ?, ?)",
-                    (product_id, price["platform"], price["price"], price["link"]),
-                )
-            for date_text, price in product["history"]:
-                db.execute(
-                    "INSERT INTO PriceHistory (product_id, date, price) VALUES (?, ?, ?)",
-                    (product_id, date_text, price),
-                )
-        db.commit()
+        catalog_path = Path(app.config["DATABASE"])
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        with catalog_path.open("w", encoding="utf-8") as handle:
+            json.dump(normalized, handle, indent=2)
+
+    def read_catalog() -> list[dict]:
+        if app.config["USE_MEMORY_STORE"]:
+            if not app.extensions["catalog_data"]:
+                app.extensions["catalog_data"] = default_products()
+            return copy.deepcopy(app.extensions["catalog_data"])
+
+        catalog_path = Path(app.config["DATABASE"])
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        if not catalog_path.exists():
+            write_catalog(default_products())
+        with catalog_path.open("r", encoding="utf-8") as handle:
+            raw_catalog = json.load(handle)
+        if not raw_catalog:
+            raw_catalog = default_products()
+            write_catalog(raw_catalog)
+        return [normalize_product(item) for item in raw_catalog]
+
+    def next_product_id(products: list[dict]) -> int:
+        return max((int(product["id"]) for product in products), default=0) + 1
 
     def extract_prices_from_form(form) -> list[dict]:
         platforms = form.getlist("platform[]")
@@ -262,6 +270,22 @@ def create_app(database_path: str | None = None) -> Flask:
         rating += min(spread_ratio * 3.5, 0.45)
         return round(clamp(rating, 2.8, 4.9), 1)
 
+    def generate_history_from_prices(prices: list[dict], rating: float) -> list[dict]:
+        if not prices:
+            return []
+        lowest_price = min(price["price"] for price in prices)
+        highest_price = max(price["price"] for price in prices)
+        spread = max(highest_price - lowest_price, max(1, lowest_price * 0.06))
+        rating_modifier = max(0.92, 1.08 - (rating / 25))
+        anchors = [1.16, 1.11, 1.08, 1.05, 1.02, 1.0]
+        dates = ["2026-03-03", "2026-03-08", "2026-03-13", "2026-03-18", "2026-03-23", "2026-03-30"]
+        history = []
+        for date_text, anchor in zip(dates, anchors):
+            synthetic_price = round((lowest_price + spread * 0.35) * anchor * rating_modifier, 2)
+            history.append({"date": date_text, "price": synthetic_price})
+        history[-1]["price"] = round(lowest_price, 2)
+        return history
+
     def parse_bulk_import(raw_text: str) -> list[dict]:
         payload = json.loads(raw_text)
         if not isinstance(payload, list):
@@ -301,60 +325,39 @@ def create_app(database_path: str | None = None) -> Flask:
         return normalized_products
 
     def save_product(payload: dict, product_id: int | None = None) -> int:
-        db = get_db()
-        if product_id is None:
-            product_id = db.execute(
-                "INSERT INTO Products (name, category, image_url, rating) VALUES (?, ?, ?, ?)",
-                (payload["name"], payload["category"], payload["image_url"], payload["rating"]),
-            ).lastrowid
-        else:
-            db.execute(
-                "UPDATE Products SET name = ?, category = ?, image_url = ?, rating = ? WHERE id = ?",
-                (payload["name"], payload["category"], payload["image_url"], payload["rating"], product_id),
-            )
-            db.execute("DELETE FROM Prices WHERE product_id = ?", (product_id,))
-            db.execute("DELETE FROM PriceHistory WHERE product_id = ?", (product_id,))
-        for price in payload["prices"]:
-            db.execute(
-                "INSERT INTO Prices (product_id, platform, price, link) VALUES (?, ?, ?, ?)",
-                (product_id, price["platform"], price["price"], price["link"]),
-            )
-        for date_text, price in payload.get("history", []):
-            db.execute(
-                "INSERT INTO PriceHistory (product_id, date, price) VALUES (?, ?, ?)",
-                (product_id, date_text, price),
-            )
-        db.commit()
-        return product_id
+        products = read_catalog()
+        assigned_id = product_id or next_product_id(products)
+        normalized = normalize_product({**payload, "id": assigned_id}, assigned_id)
+        updated = False
+
+        for index, product in enumerate(products):
+            if int(product["id"]) == int(assigned_id):
+                products[index] = normalized
+                updated = True
+                break
+
+        if not updated:
+            products.append(normalized)
+
+        products.sort(key=lambda item: int(item["id"]))
+        write_catalog(products)
+        return assigned_id
 
     def delete_product(product_id: int) -> None:
-        db = get_db()
-        db.execute("DELETE FROM Prices WHERE product_id = ?", (product_id,))
-        db.execute("DELETE FROM PriceHistory WHERE product_id = ?", (product_id,))
-        db.execute("DELETE FROM Products WHERE id = ?", (product_id,))
-        db.commit()
+        products = [product for product in read_catalog() if int(product["id"]) != int(product_id)]
+        write_catalog(products)
 
     def get_product(product_id: int) -> dict | None:
-        db = get_db()
-        product_row = db.execute("SELECT * FROM Products WHERE id = ?", (product_id,)).fetchone()
-        if not product_row:
-            return None
-        prices = db.execute("SELECT * FROM Prices WHERE product_id = ? ORDER BY price ASC", (product_id,)).fetchall()
-        history = db.execute("SELECT date, price FROM PriceHistory WHERE product_id = ? ORDER BY date ASC", (product_id,)).fetchall()
-        product = dict(product_row)
-        product["prices"] = [dict(row) for row in prices]
-        product["history"] = [dict(row) for row in history]
-        return product
+        for product in read_catalog():
+            if int(product["id"]) == int(product_id):
+                return product
+        return None
 
     def get_product_by_name(name: str) -> dict | None:
-        db = get_db()
-        product_row = db.execute(
-            "SELECT * FROM Products WHERE lower(name) = lower(?)",
-            (name.strip(),),
-        ).fetchone()
-        if not product_row:
-            return None
-        return get_product(product_row["id"])
+        for product in read_catalog():
+            if product["name"].strip().lower() == name.strip().lower():
+                return product
+        return None
 
     def score_product(product: dict) -> dict:
         current_prices = [item["price"] for item in product["prices"]]
@@ -419,14 +422,12 @@ def create_app(database_path: str | None = None) -> Flask:
         }
 
     def load_products() -> list[dict]:
-        db = get_db()
-        product_rows = db.execute("SELECT id FROM Products ORDER BY id DESC").fetchall()
-        items = []
-        for row in product_rows:
-            product = get_product(row["id"])
-            product["analytics"] = score_product(product)
-            items.append(product)
-        return items
+        products = []
+        for product in sorted(read_catalog(), key=lambda item: int(item["id"]), reverse=True):
+            enriched = copy.deepcopy(product)
+            enriched["analytics"] = score_product(enriched)
+            products.append(enriched)
+        return products
 
     def search_products(query: str) -> list[dict]:
         normalized_query = query.strip().lower()
@@ -448,22 +449,6 @@ def create_app(database_path: str | None = None) -> Flask:
             if normalized_query in searchable:
                 results.append(product)
         return results
-
-    def generate_history_from_prices(prices: list[dict], rating: float) -> list[tuple[str, float]]:
-        if not prices:
-            return []
-        lowest_price = min(price["price"] for price in prices)
-        highest_price = max(price["price"] for price in prices)
-        spread = max(highest_price - lowest_price, max(1, lowest_price * 0.06))
-        rating_modifier = max(0.92, 1.08 - (rating / 25))
-        anchors = [1.16, 1.11, 1.08, 1.05, 1.02, 1.0]
-        dates = ["2026-03-03", "2026-03-08", "2026-03-13", "2026-03-18", "2026-03-23", "2026-03-30"]
-        history = []
-        for date_text, anchor in zip(dates, anchors):
-            synthetic_price = round((lowest_price + spread * 0.35) * anchor * rating_modifier, 2)
-            history.append((date_text, synthetic_price))
-        history[-1] = (history[-1][0], round(lowest_price, 2))
-        return history
 
     def build_dashboard_metrics(products: list[dict]) -> dict:
         if not products:
@@ -507,13 +492,8 @@ def create_app(database_path: str | None = None) -> Flask:
         return wrapped_view
 
     @app.before_request
-    def boot_database() -> None:
-        init_db()
-        seed_db()
-
-    @app.teardown_appcontext
-    def teardown(exception=None) -> None:
-        close_db(exception)
+    def boot_catalog() -> None:
+        read_catalog()
 
     @app.template_filter("currency")
     def currency_filter(value):
@@ -538,6 +518,7 @@ def create_app(database_path: str | None = None) -> Flask:
         if not product:
             flash("Product not found.", "danger")
             return redirect(url_for("home"))
+        product = copy.deepcopy(product)
         product["analytics"] = score_product(product)
         return render_template(
             "product.html",

@@ -8,4 +8,5 @@ venv/
 env/
 test_data/
 smoke_admin_data/
-data/
+data/*
+!data/products.json

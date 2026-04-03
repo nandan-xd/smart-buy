@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "name": "HP 15s Ryzen 5 Laptop",
+    "category": "Tech",
+    "image_url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.3,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 52990,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE1"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 51990,
+        "link": "https://www.flipkart.com/hp-15s-ryzen-5/p/itmexample1"
+      },
+      {
+        "platform": "Reliance Digital",
+        "price": 53990,
+        "link": "https://www.reliancedigital.in/hp-15s-ryzen-5/p/491902001"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 55990
+      },
+      {
+        "date": "2026-03-08",
+        "price": 54990
+      },
+      {
+        "date": "2026-03-13",
+        "price": 54490
+      },
+      {
+        "date": "2026-03-18",
+        "price": 53990
+      },
+      {
+        "date": "2026-03-23",
+        "price": 52990
+      },
+      {
+        "date": "2026-03-30",
+        "price": 51990
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Noise Cancelling Study Headphones",
+    "category": "Tech",
+    "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.1,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 5999,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE2"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 5799,
+        "link": "https://www.flipkart.com/noise-cancelling-study-headphones/p/itmexample2"
+      },
+      {
+        "platform": "Croma",
+        "price": 6249,
+        "link": "https://www.croma.com/noise-cancelling-study-headphones/p/270451"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 6799
+      },
+      {
+        "date": "2026-03-08",
+        "price": 6599
+      },
+      {
+        "date": "2026-03-13",
+        "price": 6399
+      },
+      {
+        "date": "2026-03-18",
+        "price": 6199
+      },
+      {
+        "date": "2026-03-23",
+        "price": 5999
+      },
+      {
+        "date": "2026-03-30",
+        "price": 5799
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Scientific Calculator FX-991ES Plus",
+    "category": "Tech",
+    "image_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.8,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 1199,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE3"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 1149,
+        "link": "https://www.flipkart.com/casio-fx-991es-plus/p/itmexample3"
+      },
+      {
+        "platform": "Moglix",
+        "price": 1235,
+        "link": "https://www.moglix.com/casio-fx-991es-plus/mp/msnexample3"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 1299
+      },
+      {
+        "date": "2026-03-08",
+        "price": 1279
+      },
+      {
+        "date": "2026-03-13",
+        "price": 1249
+      },
+      {
+        "date": "2026-03-18",
+        "price": 1219
+      },
+      {
+        "date": "2026-03-23",
+        "price": 1189
+      },
+      {
+        "date": "2026-03-30",
+        "price": 1149
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Ergonomic Study Chair",
+    "category": "Fashion",
+    "image_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.0,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 7499,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE4"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 7699,
+        "link": "https://www.flipkart.com/ergonomic-study-chair/p/itmexample4"
+      },
+      {
+        "platform": "Pepperfry",
+        "price": 7899,
+        "link": "https://www.pepperfry.com/ergonomic-study-chair-1893201.html"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 7099
+      },
+      {
+        "date": "2026-03-08",
+        "price": 7249
+      },
+      {
+        "date": "2026-03-13",
+        "price": 7399
+      },
+      {
+        "date": "2026-03-18",
+        "price": 7499
+      },
+      {
+        "date": "2026-03-23",
+        "price": 7599
+      },
+      {
+        "date": "2026-03-30",
+        "price": 7499
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Minimal Skincare Repair Serum",
+    "category": "Skincare",
+    "image_url": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.2,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 549,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE5"
+      },
+      {
+        "platform": "Nykaa",
+        "price": 525,
+        "link": "https://www.nykaa.com/minimal-serum/p/example5"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 579,
+        "link": "https://www.flipkart.com/minimal-serum/p/itmexample5"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 619
+      },
+      {
+        "date": "2026-03-08",
+        "price": 599
+      },
+      {
+        "date": "2026-03-13",
+        "price": 589
+      },
+      {
+        "date": "2026-03-18",
+        "price": 569
+      },
+      {
+        "date": "2026-03-23",
+        "price": 549
+      },
+      {
+        "date": "2026-03-30",
+        "price": 525
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Campus Everyday Sneakers",
+    "category": "Fashion",
+    "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
+    "rating": 4.1,
+    "prices": [
+      {
+        "platform": "Amazon",
+        "price": 1499,
+        "link": "https://www.amazon.in/dp/B0CEXAMPLE6"
+      },
+      {
+        "platform": "Myntra",
+        "price": 1399,
+        "link": "https://www.myntra.com/shoes/campus/example6"
+      },
+      {
+        "platform": "Flipkart",
+        "price": 1599,
+        "link": "https://www.flipkart.com/campus-sneakers/p/itmexample6"
+      }
+    ],
+    "history": [
+      {
+        "date": "2026-03-03",
+        "price": 1699
+      },
+      {
+        "date": "2026-03-08",
+        "price": 1649
+      },
+      {
+        "date": "2026-03-13",
+        "price": 1599
+      },
+      {
+        "date": "2026-03-18",
+        "price": 1549
+      },
+      {
+        "date": "2026-03-23",
+        "price": 1499
+      },
+      {
+        "date": "2026-03-30",
+        "price": 1399
+      }
+    ]
+  }
+]
