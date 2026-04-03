@@ -118,6 +118,7 @@ body.theme-body {
   border-radius: 1.75rem;
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
+  color: var(--text);
 }
 
 .hero-card {
@@ -270,6 +271,7 @@ body.theme-body {
 .product-name {
   font-size: 0.98rem;
   line-height: 1.25;
+  color: var(--text);
 }
 
 .price-line {
@@ -421,6 +423,18 @@ body.theme-body {
   padding: 1.5rem;
 }
 
+.table {
+  --bs-table-color: var(--text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--border);
+}
+
+.table thead th,
+.table tbody td,
+.table tbody th {
+  color: var(--text);
+}
+
 .cheapest-row {
   background: rgba(37, 180, 107, 0.08);
 }
@@ -519,6 +533,26 @@ html[data-theme="dark"] .score-band-wait {
   display: grid;
   grid-template-columns: 1fr 160px 1.4fr;
   gap: 0.75rem;
+}
+
+html[data-theme="dark"] .text-body-secondary,
+html[data-theme="dark"] .small.text-body-secondary,
+html[data-theme="dark"] .section-copy,
+html[data-theme="dark"] .card-insight,
+html[data-theme="dark"] .trust-line,
+html[data-theme="dark"] .score-breakdown span,
+html[data-theme="dark"] .dashboard-stat span,
+html[data-theme="dark"] .mini-stat span,
+html[data-theme="dark"] .mini-stat small {
+  color: var(--muted) !important;
+}
+
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .product-card .card-body,
+html[data-theme="dark"] .product-card .card-title,
+html[data-theme="dark"] .content-card,
+html[data-theme="dark"] .detail-shell {
+  color: var(--text);
 }
 
 @media (max-width: 767px) {
